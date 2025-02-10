@@ -41,3 +41,53 @@ fn create_deadlock(){
 fn main() {
     create_deadlock();
 }
+
+// use std::{fs, os::unix::fs::FileTypeExt, process::Command, thread, time::Duration};
+
+// const FIFO_PATH: &str = "/tmp/project1_fifo";
+
+// fn create_fifo(){
+    
+//     if !fs::metadata(FIFO_PATH).map(|m| m.file_type().is_fifo()).unwrap_or(false){
+//         Command::new("mkfifo")
+//         .arg(FIFO_PATH)
+//         .status()
+//         .expect("Failed to create FIFO pipe");
+//     }
+// }
+
+// fn main() {
+//     let num_producers = 3;
+//     create_fifo();
+
+//     for i in 0..num_producers {
+//         thread::spawn(move || {
+//             let producer_name = format!("Producer-{}", i + 1);
+//             let mut producer = Command::new("cargo")
+//             .arg("run")
+//             .arg("--bin")
+//             .arg("producer")
+//             .arg("--")
+//             .arg(producer_name)
+//             .spawn()
+//             .expect("Failed to start producer");
+
+//             producer.wait().expect("Producer process failed");
+//         });
+//     }
+
+//     thread::sleep(Duration::from_millis(2000));
+
+//     let consumer_thread = thread::spawn(move || {
+//         let mut consumer = Command::new("cargo")
+//         .arg("run")
+//         .arg("--bin")
+//         .arg("consumer")
+//         .spawn()
+//         .expect("Failed to start consumer");
+        
+//         consumer.wait().expect("Consumer process failed");
+//     });
+
+//     consumer_thread.join().unwrap();
+// }
