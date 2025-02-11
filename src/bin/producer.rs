@@ -1,7 +1,8 @@
-use std::{fs::OpenOptions, io::Write, thread, time::Duration};
+use std::{fs::OpenOptions, io::Write};
 
 const FIFO_PATH: &str = "/tmp/project1_fifo";
 
+// Producer will output multiple messages to the named pipe.
 fn main() {
     let mut fifo = OpenOptions::new()
     .write(true)
@@ -17,6 +18,16 @@ fn main() {
     for msg in messages {
         println!("Producer writing {}", msg);
         writeln!(fifo, "{}", msg).expect("Failed to write to FIFO");
-        thread::sleep(Duration::from_millis(500));
+
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let result = main();
     }
 }

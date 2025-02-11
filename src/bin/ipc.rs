@@ -2,6 +2,8 @@ use std::{fs, os::unix::fs::FileTypeExt, process::Command, thread, time::Duratio
 
 const FIFO_PATH: &str = "/tmp/project1_fifo";
 
+
+// Creates a fifo file in tmp folder
 fn create_fifo(){
     
     if !fs::metadata(FIFO_PATH).map(|m| m.file_type().is_fifo()).unwrap_or(false){
@@ -12,6 +14,7 @@ fn create_fifo(){
     }
 }
 
+// Cleans up the fifo file
 fn delete_fifo(){
     
     if fs::metadata(FIFO_PATH).map(|m| m.file_type().is_fifo()).unwrap_or(false){
@@ -25,6 +28,7 @@ fn delete_fifo(){
 fn main() {
     create_fifo();
 
+    // Create a Producer process to output messages.
     let mut producer = Command::new("cargo")
         .arg("run")
         .arg("--bin")
@@ -34,7 +38,10 @@ fn main() {
 
     
 
+    // "Processing" time
     thread::sleep(Duration::from_millis(2000));
+
+    // Create a consumer process 
     let mut consumer = Command::new("cargo")
         .arg("run")
         .arg("--bin")
