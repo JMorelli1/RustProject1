@@ -1,0 +1,77 @@
+{
+    "user": {
+      "id": 12345,
+      "name": "John Doe",
+      "email": "johndoe@example.com",
+      "phone": "+1-555-1234",
+      "address": {
+        "street": "123 Elm Street",
+        "city": "Springfield",
+        "state": "IL",
+        "zip": "62704"
+      }
+    },
+    "accounts": [
+      {
+        "accountId": "ACC-987654321",
+        "type": "Checking",
+        "balance": 1500.75,
+        "currency": "USD",
+        "statements": [
+          {
+            "transactionId": "TXN-1001",
+            "date": "2024-02-10",
+            "description": "Deposit - Paycheck",
+            "amount": 2500.00,
+            "type": "credit"
+          },
+          {
+            "transactionId": "TXN-1002",
+            "date": "2024-02-12",
+            "description": "Grocery Store",
+            "amount": -125.49,
+            "type": "debit"
+          },
+          {
+            "transactionId": "TXN-1003",
+            "date": "2024-02-14",
+            "description": "Online Subscription - Netflix",
+            "amount": -15.99,
+            "type": "debit"
+          }
+        ]
+      },
+      {
+        "accountId": "ACC-567890123",
+        "type": "Savings",
+        "balance": 7500.00,
+        "currency": "USD",
+        "statements": [
+          {
+            "transactionId": "TXN-2001",
+            "date": "2024-02-01",
+            "description": "Interest Earned",
+            "amount": 12.50,
+            "type": "credit"
+          },
+          {
+            "transactionId": "TXN-2002",
+            "date": "2024-02-05",
+            "description": "Transfer to Checking",
+            "amount": -500.00,
+            "type": "debit"
+          }
+        ]
+      }
+    ],
+    "lastLogin": "2024-02-09T15:30:00Z",
+    "preferences": {
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      },
+      "theme": "dark"
+    }
+  }
+  
