@@ -1,4 +1,4 @@
 Hello there
 I'm a small file with very little data.
 Whoa there we are almost there.
-Looks it's the end of the file!
+Look it's the end of the file!

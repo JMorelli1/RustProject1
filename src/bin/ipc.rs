@@ -1,4 +1,4 @@
-use std::{fs, os::unix::fs::FileTypeExt, process::Command, thread, time::Duration};
+use std::{env, fs, ops::Index, os::unix::fs::FileTypeExt, process::Command, thread, time::Duration};
 
 const FIFO_PATH: &str = "/tmp/project1_fifo";
 
@@ -28,18 +28,30 @@ fn delete_fifo(){
 fn main() {
     create_fifo();
 
-    // Create a Producer process to output messages.
-    let mut producer = Command::new("cargo")
+    thread::sleep(Duration::from_secs(20));
+
+    // Pull program arguments
+    let args: Vec<String> = env::args().collect();
+
+    // Build file path from args
+    let producer_file_relative_path = format!("{}{}", "src/assets/", args.index(1));
+    let producer_file_full_path = env::current_dir().unwrap().join(producer_file_relative_path);
+
+    /*
+        Create a Producer process to output messages. This is separated to its own thread so that the entire 
+        file can be written before the consumer picks it up.
+    */
+    let producer_thread = thread::spawn(move || {
+        let mut producer = Command::new("cargo")
         .arg("run")
         .arg("--bin")
         .arg("producer")
+        .arg(producer_file_full_path)
         .spawn()
         .expect("Failed to start producer");
 
-    
-
-    // "Processing" time
-    thread::sleep(Duration::from_millis(2000));
+        producer.wait().expect("Producer process failed");
+    });
 
     // Create a consumer process 
     let mut consumer = Command::new("cargo")
@@ -51,7 +63,7 @@ fn main() {
         
         
     consumer.wait().expect("Consumer process failed");
-    producer.wait().expect("Producer process failed");
+    producer_thread.join().expect("Producer thread errored");
 
     delete_fifo();
 }
