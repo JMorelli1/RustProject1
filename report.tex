@@ -1,0 +1,101 @@
+\documentclass{report}
+\usepackage{graphicx}  % Allows inclusion of images
+\usepackage{listings}  % Code formatting
+\usepackage{xcolor}    % Colors for code highlighting
+\usepackage{hyperref}  % Hyperlinks in the document
+% Define Rust syntax highlighting
+
+\lstdefinelanguage{Rust}{
+morekeywords={fn, let, mut, move, loop, match, if, else, while, for, break, continue, return, struct, impl, pub, use, mod, crate, super, Self, as, const, static, ref, trait, enum, type, where, unsafe, async, await},
+sensitive=true,
+morecomment=[l]{//},
+morecomment=[s]{/}{/},
+morestring=[b]"
+}
+
+\lstset{
+language=Rust,
+basicstyle=\ttfamily\footnotesize,
+keywordstyle=\color{blue},
+commentstyle=\color{green!70!black},
+stringstyle=\color{orange},
+numbers=left,
+numberstyle=\tiny\color{gray},
+stepnumber=1,
+showstringspaces=false,
+breaklines=true,
+frame=single,
+captionpos=b
+}
+
+
+\begin{document}
+
+\title{Multi-Threaded Programming
+and IPC in Rust}
+\author{James Morelli \\ \small NetId: 3502 \\ \small Operating Systems}
+\date{\today}
+
+\maketitle
+\tableofcontents
+\chapter{Introduction}
+Concurrency is a fundamental concept in modern computing, enabling efficient execution of multiple tasks. Rust, known for its memory safety guarantees, provides powerful tools for concurrent programming. This report implements a four-phase project to demonstrate Rust's concurrency features.
+\section*{Objectives and Scope}
+This is the section where I will cover objectives and scope.
+\section*{Approach}
+This is the section where I will cover approach.
+\chapter{Implementation Details}
+This phase introduces basic threading in Rust, demonstrating concurrent execution using multiple threads.
+\section{Implementation}
+\begin{lstlisting}[caption={Basic Thread Operations in Rust}, label=code:phase1]
+use std::{thread, time::Duration};
+use rand::Rng;
+
+/*
+    Phase 1: Basic Thread Operations
+    This program demonstrates basic thread creation and concurrency. It will create 10 threads, log their ids on start, and
+    pause for a random number of milliseconds (between 100-500).
+*/
+fn main() {
+    // Array for storing started threads
+    let mut transactions = vec![];
+    
+
+    // Create 10 new threads and push them into array. Pauses for a random number of milli seconds to imitate "processing" time.
+    for i in 1..=10 {
+        let transaction = thread::spawn(move || {
+            println!("Thread {} is processing transaction", i);
+
+            let mut rng = rand::rng();
+            let random_pause_time: u64 = rng.random_range(100..=500);
+
+            thread::sleep(Duration::from_millis(random_pause_time));
+            println!("Thread {} has completed it's transaction after {} milliseconds", i, random_pause_time);
+        });
+        
+        transactions.push(transaction);
+    }
+
+    // Wait for all threads to finish.
+    for transaction in transactions {
+        transaction.join().unwrap();
+    }
+
+    println!("All transactions finished!");
+}
+\end{lstlisting}
+\chapter{Environment Setup}
+This section details the process of setting up Ubuntu on my personal device. To establish a functional development environment, I installed Ubuntu on a secondary drive in an older Acer laptop. This approach provided a quick and efficient setup while significantly outperforming previous attempts using a virtual machine in terms of speed and responsiveness.  
+
+Moving forward, I plan to keep Ubuntu installed on this device for personal development and testing. I find the Linux operating system to be highly intuitive, and I prefer the Bash shell over Windows PowerShell due to its streamlined syntax and greater flexibility for scripting and automation.
+
+
+\section{Tools Used}
+The programming language selected for this project was Rust. Initially, I found Rust challenging, particularly due to its ownership rules. However, its strict compile-time checks provided immediate feedback, preventing mistakes from propagating too far. Even small sections of code would quickly trigger compiler errors, which significantly accelerated my learning process and improved my understanding of ownership and borrowing concepts.  
+
+One of the most rewarding aspects of learning Rust was experiencing a programming language without a garbage collector for the first time. This required me to be more mindful of memory management and avoid unnecessary object copying. As a result, I gained a deeper understanding of efficient resource allocation and memory optimization. Additionally, this experience has enhanced my comprehension of the singleton model in Java, particularly in terms of managing object lifetimes and reducing redundant allocations.
+
+
+\chapter{Conclusion}
+This report demonstrated Rust's concurrency features through a four-phase project, covering basic threading, mutex-based synchronization, deadlock creation, and resolution techniques. Rust's ownership model and thread safety guarantees help prevent common concurrency issues, making it a robust choice for concurrent programming.
+\end{document}
