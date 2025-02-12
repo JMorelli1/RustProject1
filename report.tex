@@ -43,7 +43,7 @@ Concurrency is a fundamental concept in modern computing, enabling efficient exe
 \section*{Objectives and Scope}
 This is the section where I will cover objectives and scope.
 \section*{Approach}
-This is the section where I will cover approach.
+The approach for this program was to build each phase in sequence. Dividing each progression into different files to track changes and enhancements to meet each new requirement. This allowed for better understanding of exactly what was being expanded ie. thread management to mutex locks for consistent and safe data access from phase 1 to 2. Once each phase for thread management and IPC requirements were completed I endeavored to integrate each section for a wholistic design and utilization of Rust. Initially I kept each file isolated for ease of reading and understanding but with the integration I wanted this design to be more true to what a fully functioning program would be structured using best practices.
 \chapter{Implementation Details}
 This phase introduces basic threading in Rust, demonstrating concurrent execution using multiple threads.
 \section{Implementation}
@@ -95,7 +95,18 @@ The programming language selected for this project was Rust. Initially, I found 
 
 One of the most rewarding aspects of learning Rust was experiencing a programming language without a garbage collector for the first time. This required me to be more mindful of memory management and avoid unnecessary object copying. As a result, I gained a deeper understanding of efficient resource allocation and memory optimization. Additionally, this experience has enhanced my comprehension of the singleton model in Java, particularly in terms of managing object lifetimes and reducing redundant allocations.
 
+\section*{Challenges}
+The development environment initially was attempted with a VM on an M2 Mac device; this was tried with VirtualBox and UTM. I had a lot of trouble with this configuration as the VM software would start and install Ubuntu on the VM but when it would restart the entire system would refresh and restart the install. I believe this had to do with how the VM was attempting to partition my drives. I solved this by creating a boot-able USB drive with Ubuntu (used Rufus to create the drive) and dual-loaded this onto a Windows machine.
 
-\chapter{Conclusion}
-This report demonstrated Rust's concurrency features through a four-phase project, covering basic threading, mutex-based synchronization, deadlock creation, and resolution techniques. Rust's ownership model and thread safety guarantees help prevent common concurrency issues, making it a robust choice for concurrent programming.
+\chapter{Challenges and Solutions}
+This section covers challenges and solutions of development.
+
+\chapter{Results and Outcomes}
+This section serves as an overview of results and outcomes.
+
+\chapter{Reflection and Learning}
+This is the reflection section.
+
+\chapter{References and Citations}
+
 \end{document}
