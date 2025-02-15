@@ -1,7 +1,12 @@
 [package]
-name = "OS3502-Project1"
+name = "os3502_project1"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "main"  # Must match main.rs binary name
+path = "src/main.rs"
+
 [dependencies]
 rand = "0.9.0"
+nix = "0.26.2"

@@ -1,93 +1,56 @@
 mod model;
-use std::thread;
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
-use crate::model::Account;
+mod service;
+mod data;
 
-fn transfer(from: &Arc<Mutex<Account>>, to: &Arc<Mutex<Account>>, amount: i32){
-    let mut from_lock = from.lock().unwrap();
-    println!("{:?} locked", &*from_lock);
-    thread::sleep(Duration::from_millis(1000));
-    let mut to_lock = to.lock().unwrap();
-
-    from_lock.balance -= amount;
-    to_lock.balance += amount;
-
-    println!("Transferring {} from {:?} to {:?}", amount, &*from_lock, &*to_lock);
-}
-
-fn create_deadlock(){
-    let account1 = Arc::new(Mutex::new(Account { balance : 2000 }));
-    let account2 = Arc::new(Mutex::new(Account { balance : 5000 }));
-
-    let a1 = Arc::clone(&account1);
-    let a2 = Arc::clone(&account2);
-
-    let a1_transaction = thread::spawn(move || {
-        transfer(&a1, &a2, 100);
-    });
-
-    let a1_clone = Arc::clone(&account1);
-    let a2_clone = Arc::clone(&account2);
-
-    let a2_transaction = thread::spawn(move || {
-        transfer(&a2_clone, &a1_clone, 50);
-    });
-
-    a1_transaction.join().unwrap();
-    a2_transaction.join().unwrap();
-}
+use std::{process::Command, thread, vec};
+use os3502_project1::{create_fifo, delete_fifo, get_writable_pipe, get_readable_pipe};
 
 fn main() {
-    create_deadlock();
-}
+    create_fifo();
 
-// use std::{fs, os::unix::fs::FileTypeExt, process::Command, thread, time::Duration};
+    let customer_start_up = vec![
+        ("Jim", 1),
+        ("Kelly", 4),
+        ("Frank", 9),
+        ("Morgan", 10),
+        ("Teddy", 3),
+        ("Joesph", 6),
+        ("Jessica", 7),
+        ("Albert", 2),
+        ("Tyler", 5),
+        ("Linda", 8)
+    ];
 
-// const FIFO_PATH: &str = "/tmp/project1_fifo";
+    let mut transactions = vec![];
 
-// fn create_fifo(){
+    for customer in customer_start_up {
+        let customer_thread = thread::spawn(move || {
+            let mut producer = Command::new("cargo")
+            .arg("run")
+            .arg("--bin")
+            .arg("customer_init")
+            .arg(customer.0)
+            .arg(customer.1.to_string())
+            .spawn()
+            .expect("Failed to start customer action");
     
-//     if !fs::metadata(FIFO_PATH).map(|m| m.file_type().is_fifo()).unwrap_or(false){
-//         Command::new("mkfifo")
-//         .arg(FIFO_PATH)
-//         .status()
-//         .expect("Failed to create FIFO pipe");
-//     }
-// }
+            producer.wait().expect("Producer process failed");
+        });
 
-// fn main() {
-//     let num_producers = 3;
-//     create_fifo();
+        transactions.push(customer_thread);
+    }
 
-//     for i in 0..num_producers {
-//         thread::spawn(move || {
-//             let producer_name = format!("Producer-{}", i + 1);
-//             let mut producer = Command::new("cargo")
-//             .arg("run")
-//             .arg("--bin")
-//             .arg("producer")
-//             .arg("--")
-//             .arg(producer_name)
-//             .spawn()
-//             .expect("Failed to start producer");
+    let mut consumer = Command::new("cargo")
+    .arg("run")
+    .arg("--bin")
+    .arg("teller_init")
+    .spawn()
+    .expect("Failed to start consumer");
 
-//             producer.wait().expect("Producer process failed");
-//         });
-//     }
+    consumer.wait().expect("Consumer failed");
+    for customer_thread in transactions {
+        customer_thread.join().expect("Customer thread failed.");
+    }
 
-//     thread::sleep(Duration::from_millis(2000));
-
-//     let consumer_thread = thread::spawn(move || {
-//         let mut consumer = Command::new("cargo")
-//         .arg("run")
-//         .arg("--bin")
-//         .arg("consumer")
-//         .spawn()
-//         .expect("Failed to start consumer");
-        
-//         consumer.wait().expect("Consumer process failed");
-//     });
-
-//     consumer_thread.join().unwrap();
-// }
+    delete_fifo();
+}

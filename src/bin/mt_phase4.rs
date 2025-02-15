@@ -14,7 +14,7 @@ enum TransactionAction{
     Withdraw
 }
 
-fn transfer(from: Arc<Mutex<Account>>, to: Arc<Mutex<Account>>, thread_id: i32, action: TransactionAction) -> thread::JoinHandle<()> {
+fn transfer(from: Arc<Mutex<Account>>, to: Arc<Mutex<Account>>, thread_id: String, action: TransactionAction) -> thread::JoinHandle<()> {
     thread::spawn(move || {
         let transaction_start = Instant::now();
         println!("Thread {} is starting transaction", thread_id);
@@ -63,20 +63,21 @@ fn main() {
     let mut transactions = vec![];
 
     
-    for thread_id in 1..=10 {
+    for thread_id in 1..=50 {
         // Start 10 new threads with PROPER account access ordering. This will cause deadlocks.
-        let transaction1 = transfer(Arc::clone(&account1), Arc::clone(&account2), thread_id, TransactionAction::Deposit);
-        let transaction2 = transfer(Arc::clone(&account1), Arc::clone(&account2), thread_id+10, TransactionAction::Withdraw);
+        let transaction1 = transfer(Arc::clone(&account1), Arc::clone(&account2), format!("{}", thread_id), TransactionAction::Deposit);
+        let transaction2 = transfer(Arc::clone(&account1), Arc::clone(&account2), format!("{}-2", thread_id), TransactionAction::Withdraw);
 
         transactions.push(transaction1);
         transactions.push(transaction2);
     }
+    let num_transactions = transactions.len();
 
     // Wait for all threads to finish.
     for transaction in transactions {
         transaction.join().unwrap();
     }
 
-    println!("All transactions finished!");
+    println!("All {} transactions finished!" , num_transactions);
     println!("Final balance of accounts is {} {}", account1.lock().unwrap().balance, account2.lock().unwrap().balance);
 }
