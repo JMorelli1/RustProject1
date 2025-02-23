@@ -18,14 +18,24 @@ fn main() {
         ("Jessica", 7),
         ("Albert", 2),
         ("Tyler", 5),
+        ("Linda", 8),
+        ("Jim", 1),
+        ("Kelly", 4),
+        ("Frank", 9),
+        ("Morgan", 10),
+        ("Teddy", 3),
+        ("Joesph", 6),
+        ("Jessica", 7),
+        ("Albert", 2),
+        ("Tyler", 5),
         ("Linda", 8)
     ];
 
-    let mut transactions = vec![];
+    let mut customer_threads = vec![];
 
     for customer in customer_start_up {
         let customer_thread = thread::spawn(move || {
-            let mut producer = Command::new("cargo")
+            let mut customer_process = Command::new("cargo")
             .arg("run")
             .arg("--bin")
             .arg("customer_init")
@@ -34,21 +44,21 @@ fn main() {
             .spawn()
             .expect("Failed to start customer action");
     
-            producer.wait().expect("Producer process failed");
+            customer_process.wait().expect("Producer process failed");
         });
 
-        transactions.push(customer_thread);
+        customer_threads.push(customer_thread);
     }
 
-    let mut consumer = Command::new("cargo")
+    let mut teller_process = Command::new("cargo")
     .arg("run")
     .arg("--bin")
     .arg("teller_init")
     .spawn()
     .expect("Failed to start consumer");
 
-    consumer.wait().expect("Consumer failed");
-    for customer_thread in transactions {
+    teller_process.wait().expect("Consumer failed");
+    for customer_thread in customer_threads {
         customer_thread.join().expect("Customer thread failed.");
     }
 

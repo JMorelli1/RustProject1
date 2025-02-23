@@ -18,6 +18,10 @@ impl Client {
         })
     }
 
+    /*
+        Opens fifo file and locks the file to write to.
+        Generates a random amount to transfer to another account.
+    */
     pub fn start_request(&self) {
         let fifo = get_writable_pipe();
 
@@ -29,7 +33,7 @@ impl Client {
         let amount = rng.random_range(100..=1000);
         println!("Customer {} requesting transaction of account id {} to {}", self.name, self.account_id, to_account);
 
-        writeln!(&fifo, "{} {} {} {}", self.name, self.account_id, to_account, amount).expect("Failed to write client request.");
+        writeln!(&fifo, "{},{},{},{}", self.name, self.account_id, to_account, amount).expect("Failed to write client request.");
 
         flock(fifo.as_raw_fd(), FlockArg::Unlock).expect("Failed to unlock the FIFO file");
     }

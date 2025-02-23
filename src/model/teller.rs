@@ -13,6 +13,7 @@ impl Teller {
         })
     }
 
+    // Gets fifo file and reads customer requests. Starts a thread to process the customer transfer.
     pub fn process_customer_transactions(&self) {
         let fifo = get_readable_pipe();
         let reader = BufReader::new(fifo);
@@ -21,10 +22,10 @@ impl Teller {
         for line in reader.lines(){
             let message = line.expect("Failed to read line from FIFO.");
             
-            let message_values: Vec<&str> = message.split_whitespace().collect();
+            let message_values: Vec<&str> = message.split(",").collect();
             let (customer_name, from_account, to_account, amount) = (message_values[0], message_values[1], message_values[2], message_values[3]);
 
-            let transfer_thread = self.transfer_service.transfer(from_account.parse().unwrap(), to_account.parse().unwrap(), String::from(customer_name), amount.parse().unwrap());
+            let transfer_thread = self.transfer_service.start_transfer(from_account.parse().unwrap(), to_account.parse().unwrap(), String::from(customer_name), amount.parse().unwrap());
 
             transactions.push(transfer_thread);
         }    
