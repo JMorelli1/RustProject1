@@ -1,4 +1,4 @@
-use std::{env, fs, ops::Index, os::unix::fs::FileTypeExt, process::Command, thread, time::Duration};
+use std::{env, fs, os::unix::fs::FileTypeExt, process::Command, thread};
 
 const FIFO_PATH: &str = "/tmp/project1_fifo";
 
@@ -28,13 +28,16 @@ fn delete_fifo(){
 fn main() {
     create_fifo();
 
-    thread::sleep(Duration::from_secs(20));
-
     // Pull program arguments
     let args: Vec<String> = env::args().collect();
 
+    println!("{:?}", args);
+    if args.get(1).is_none() {
+        panic!("Cannot process message without the file path. Please add the message filepath as an argument.")
+    }
+
     // Build file path from args
-    let producer_file_relative_path = format!("{}{}", "src/assets/", args.index(1));
+    let producer_file_relative_path = format!("{}{}", "src/assets/", args.get(1).unwrap());
     let producer_file_full_path = env::current_dir().unwrap().join(producer_file_relative_path);
 
     /*

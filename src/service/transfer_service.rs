@@ -1,5 +1,5 @@
 use crate::{data::accounts_data::AccountsData, model::Account, service::transaction_action::TransactionAction};
-use std::{process, sync::Arc, thread, time::{Duration, Instant, SystemTime}};
+use std::{sync::Arc, thread, time::{Duration, Instant}};
 
 use chrono::Utc;
 use rand::Rng;
@@ -26,7 +26,7 @@ impl TransferService {
     fn transfer(from: Arc<Account>, to: Arc<Account>, customer: String, amount: i32, action: TransactionAction) {
             let mut transaction_start = Instant::now();
             let mut retry_count = 0;
-            println!("[Thread PID {}]: Customer {} is starting transaction at {:?}", process::id(), customer, Utc::now());
+            println!("[{:?}]: Customer {} is starting transaction at {:?}", thread::current().id(), customer, Utc::now());
     
             // Generate random processing time.
             let mut rng = rand::rng();
@@ -56,7 +56,7 @@ impl TransferService {
                             *from_balance += amount;
                             *to_balance -= amount;
 
-                            println!("[Thread PID {}]: Transfer {} from Account {:?} to Account {:?} completed at {:?}", process::id(), amount, to.id, from.id, Utc::now());
+                            println!("[{:?}]: Transfer {} from Account {:?} to Account {:?} completed at {:?}", thread::current().id(), amount, to.id, from.id, Utc::now());
                         }
                         TransactionAction::Deposit => {
                             if *from_balance - amount < 0 {
@@ -66,7 +66,7 @@ impl TransferService {
                             *from_balance -= amount;
                             *to_balance += amount;
 
-                            println!("[Thread PID {}]: Transfer {} from Account {:?} to Account {:?} completed at {:?}", process::id(), amount, from.id, to.id, Utc::now());
+                            println!("[{:?}]: Transfer {} from Account {:?} to Account {:?} completed at {:?}", thread::current().id(), amount, from.id, to.id, Utc::now());
                         }
                     }
                     return;

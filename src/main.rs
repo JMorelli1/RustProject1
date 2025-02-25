@@ -28,7 +28,7 @@ fn main() {
         ("Jessica", 7),
         ("Albert", 2),
         ("Tyler", 5),
-        ("Linda", 8)
+        ("Linda", 8),
     ];
 
     let mut customer_threads = vec![];
